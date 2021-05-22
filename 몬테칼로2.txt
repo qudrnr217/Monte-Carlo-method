@@ -1,0 +1,90 @@
+person_num=round(3*rand(1)+1);
+
+time=0;
+
+%counter1=zeros(1,20);
+%counter2=zeros(1,20);
+
+wait1=zeros(1,100);
+wait2=zeros(1,100);
+
+make_time_array=zeros(1,100);
+
+wait1_i=1;
+
+cnt1=zeros(1,100);
+cnt2=zeros(1,100);
+%a=zeros(1,100);
+
+while(time~=3600)
+    make_time=round((90*(rand(1))+30));
+    %a=make_time_array;
+    person_num=round(3*rand(1)+1);
+    
+    for i=1:1:20
+        person_num=round(3*rand(1)+1);
+        if(sum(counter1)==0&&sum(counter2)==0)%두줄 모두 0명일때
+            pri=round(1*rand(1));
+        elseif(sum(counter1)<sum(counter2))%줄이있는데 counter2가 더많을때
+            pri=0;
+        elseif(sum(counter2)<sum(counter1))%줄이있는데 counter1가 더많을때
+            pri=1;
+        end
+        
+        
+        if(pri==0)
+            if(sum(counter1)<=9) %카운터1로 줄을 먼저설때
+                counter1(1,i)=person_num;
+                wait1(1,i)=counter1(1,i);
+                
+            elseif(sum(counter1)>=10&&sum(counter2)<10||sum(counter1)>sum(counter2)) %카운터1에서 꽉차고 카운터2에도 자리가남았을떄,카운터1이 줄이길어서 카운터 2로 설때
+               counter2(1,i)=person_num;
+                wait2(1,i)=counter2(1,i);
+            end
+            
+        elseif(pri==1)
+            if(sum(counter2)<=9) %카운터2로 줄을 먼저설때
+                counter2(1,i)=person_num;
+                wait2(1,i)=counter2(1,i);
+                
+            elseif(sum(counter2)>=10&&sum(counter1)<10||sum(counter2)>sum(counter1)) %카운터2에서 꽉차고 카운터1에도 자리가남았을떄,카운터2이 줄이길어서 카운터 1로 설때
+                counter1(1,i)=person_num;
+                wait1(1,i)=counter1(1,i);
+            end
+        end
+    end
+    
+    if(sum(counter1)>=10)
+        for i=1:1:20
+            counter1(1,i)=0;
+        end
+    end
+    if(sum(counter2)>=10)
+        for i=1:1:20
+            counter2(1,i)=0;
+        end
+    end
+    %사람들이 기다리고 빠져나갈때
+    make_time_array(1,wait1_i)=make_time;
+    
+    for i=3600:-1:1
+        if(make_time_array(1,wait1_i)==i) %wait1의 사람들 빠져나가게
+            time=time+i;  %시간이더해짐
+            make_time_array(1,wait1_i)=0;
+            for j=100:-1:2 %make_time_array에서 빠진것에 대해 쉬프트
+                make_time_array(1,j-1)=make_time_array(1,j);
+            end
+            cnt1=cnt1+wait1(1,wait1_i);
+            for k=100:-1:2 %wait1을 빠진것에 대해 쉬프트
+                wait1(1,k-1)=wait1(1,k);
+            end
+            
+        end
+        
+    end
+    
+    if(wait1_i<100)
+        wait1_i=wait1_i+1;
+    end
+    %time=time+1;
+end
